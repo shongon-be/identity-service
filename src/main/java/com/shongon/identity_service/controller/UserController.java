@@ -4,6 +4,7 @@ import com.shongon.identity_service.dto.request.CreateUserRequest;
 import com.shongon.identity_service.dto.request.UpdateUserRequest;
 import com.shongon.identity_service.entity.User;
 import com.shongon.identity_service.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public User register(@RequestBody CreateUserRequest request) {
+    public User register(@RequestBody @Valid CreateUserRequest request) {
         return userService.createUser(request);
     }
 

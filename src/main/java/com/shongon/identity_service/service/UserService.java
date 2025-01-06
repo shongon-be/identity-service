@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -17,6 +16,9 @@ public class UserService {
 
     public User createUser(CreateUserRequest request) {
         User user = new User();
+
+        if(userRepository.existsByUsername(request.getUsername()))
+            throw new RuntimeException("Username is already in use");
 
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
