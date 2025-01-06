@@ -2,6 +2,7 @@ package com.shongon.identity_service.controller;
 
 import com.shongon.identity_service.dto.request.CreateUserRequest;
 import com.shongon.identity_service.dto.request.UpdateUserRequest;
+import com.shongon.identity_service.dto.response.ApiResponse;
 import com.shongon.identity_service.entity.User;
 import com.shongon.identity_service.service.UserService;
 import jakarta.validation.Valid;
@@ -17,28 +18,49 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public User register(@RequestBody @Valid CreateUserRequest request) {
-        return userService.createUser(request);
+    public ApiResponse<User> register(@RequestBody @Valid CreateUserRequest request) {
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+
+        apiResponse.setResult(userService.createUser(request));
+
+        return apiResponse;
     }
 
     @GetMapping("/view-all")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ApiResponse<List<User>> getAllUsers() {
+        ApiResponse<List<User>> apiResponse = new ApiResponse<>();
+
+        apiResponse.setResult(userService.getAllUsers());
+
+        return apiResponse;
     }
 
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable String userId) {
-        return userService.getUserById(userId);
+    public ApiResponse<User> getUserById(@PathVariable String userId) {
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+
+        apiResponse.setResult(userService.getUserById(userId));
+
+        return apiResponse;
     }
 
     @PutMapping("/update/{userId}")
-    public User updateUser(@PathVariable String userId, @RequestBody UpdateUserRequest request) {
-        return userService.updateUser(userId, request);
+    public ApiResponse<User> updateUser(@PathVariable String userId, @RequestBody UpdateUserRequest request) {
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+
+        apiResponse.setResult(userService.updateUser(userId, request));
+
+        return apiResponse;
     }
 
     @DeleteMapping("/delete/{userId}")
-    public String deleteUser(@PathVariable String userId) {
+    public ApiResponse<String> deleteUser(@PathVariable String userId) {
+        ApiResponse<String> apiResponse = new ApiResponse<>();
+
         userService.deleteUser(userId);
-        return "User has been deleted!";
+
+        apiResponse.setResult("User has been deleted!");
+
+        return apiResponse;
     }
 }
