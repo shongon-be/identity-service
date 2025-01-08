@@ -6,13 +6,14 @@ import com.shongon.identity_service.dto.response.CreateUserResponse;
 import com.shongon.identity_service.dto.response.GetAllUsersResponse;
 import com.shongon.identity_service.dto.response.UpdateUserResponse;
 import com.shongon.identity_service.dto.response.ViewUserResponse;
-import com.shongon.identity_service.entity.User;
 import com.shongon.identity_service.exception.AppException;
 import com.shongon.identity_service.exception.ErrorCode;
 import com.shongon.identity_service.mapper.UserMapper;
 import com.shongon.identity_service.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,9 +21,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    UserRepository userRepository;
+    UserMapper userMapper;
 
     @Transactional
     public CreateUserResponse createUser(CreateUserRequest request) {
@@ -33,6 +35,8 @@ public class UserService {
                .map(userRepository::save)
                .map(userMapper::toCreateUserResponse)
                .orElseThrow(() ->  new AppException(ErrorCode.USER_CREATION_FAILED));
+                // Quăng ra lỗi nếu 1 trong 3 hoặc tất cả  map trả về null
+                // Hoặc xảy ra lỗi mapping/ lưu xuống DB/ chuyển đổi data thanh response
     }
 
     @Transactional

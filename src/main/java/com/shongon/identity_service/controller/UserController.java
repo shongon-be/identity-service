@@ -5,16 +5,19 @@ import com.shongon.identity_service.dto.request.UpdateUserRequest;
 import com.shongon.identity_service.dto.response.*;
 import com.shongon.identity_service.service.UserService;
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/users")
 public class UserController {
-    private final UserService userService;
+    UserService userService;
 
     @PostMapping("/register")
     public ApiResponse<CreateUserResponse> register(@RequestBody @Valid CreateUserRequest request) {
