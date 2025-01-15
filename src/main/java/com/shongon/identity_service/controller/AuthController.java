@@ -1,7 +1,10 @@
 package com.shongon.identity_service.controller;
 
+import com.nimbusds.jose.JOSEException;
 import com.shongon.identity_service.dto.request.auth.AuthenticationRequest;
+import com.shongon.identity_service.dto.request.auth.IntrospectRequest;
 import com.shongon.identity_service.dto.response.auth.AuthenticationResponse;
+import com.shongon.identity_service.dto.response.auth.IntrospectResponse;
 import com.shongon.identity_service.dto.response.user.ApiResponse;
 import com.shongon.identity_service.service.AuthService;
 import lombok.AccessLevel;
@@ -12,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -21,11 +26,20 @@ public class AuthController {
 
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authRequest) {
-        boolean result = authService.authenticate(authRequest);
+        var result = authService.authenticate(authRequest);
         return ApiResponse.<AuthenticationResponse>builder()
-                .result(AuthenticationResponse.builder()
-                        .isAuthenticated(result)
-                        .build())
+                .code(200)
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/introspect")
+    public ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest introspectRequest)
+            throws ParseException, JOSEException {
+        var result = authService.introspect(introspectRequest);
+        return ApiResponse.<IntrospectResponse>builder()
+                .code(200)
+                .result(result)
                 .build();
     }
 }
