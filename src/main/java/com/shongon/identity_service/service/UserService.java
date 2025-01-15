@@ -1,11 +1,12 @@
 package com.shongon.identity_service.service;
 
-import com.shongon.identity_service.dto.request.CreateUserRequest;
-import com.shongon.identity_service.dto.request.UpdateUserRequest;
-import com.shongon.identity_service.dto.response.CreateUserResponse;
-import com.shongon.identity_service.dto.response.GetAllUsersResponse;
-import com.shongon.identity_service.dto.response.UpdateUserResponse;
-import com.shongon.identity_service.dto.response.ViewUserResponse;
+import com.shongon.identity_service.dto.request.user.CreateUserRequest;
+import com.shongon.identity_service.dto.request.user.UpdateUserRequest;
+import com.shongon.identity_service.dto.response.user.CreateUserResponse;
+import com.shongon.identity_service.dto.response.user.GetAllUsersResponse;
+import com.shongon.identity_service.dto.response.user.UpdateUserResponse;
+import com.shongon.identity_service.dto.response.user.ViewUserResponse;
+import com.shongon.identity_service.entity.User;
 import com.shongon.identity_service.exception.AppException;
 import com.shongon.identity_service.exception.ErrorCode;
 import com.shongon.identity_service.mapper.UserMapper;
@@ -14,10 +15,11 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,40 +32,37 @@ public class UserService {
     public CreateUserResponse createUser(CreateUserRequest request) {
         validateUsername(request.getUsername());
 
-       return Optional.of(request)
-               .map(userMapper::createUser)
-               .map(userRepository::save)
-               .map(userMapper::toCreateUserResponse)
-               .orElseThrow(() ->  new AppException(ErrorCode.USER_CREATION_FAILED));
-                // Quăng ra lỗi nếu 1 trong 3 hoặc tất cả  map trả về null
-                // Hoặc xảy ra lỗi mapping/ lưu xuống DB/ chuyển đổi data thanh response
+        User user = userMapper.createUser(request);
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        return userMapper.toCreateUserResponse(userRepository.save(user));
+
     }
 
     @Transactional
     public List<GetAllUsersResponse> getAllUsers() {
         return userRepository.findAll()
-                .parallelStream()
+                .stream()
                 .map(userMapper::toGetAllUserResponse)
                 .toList();
     }
 
     @Transactional
     public ViewUserResponse getUserById(String id) {
-        return userRepository.findById(id)
-                .map(userMapper::toViewUserResponse)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return userMapper.toViewUserResponse(userRepository.findById(id).
+                orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
     }
 
     @Transactional
     public UpdateUserResponse updateUser(String userId, UpdateUserRequest request) {
-        return userRepository.findById(userId)
-                .map(user ->
-                {
-                    userMapper.updateUser(user,request);
-                    return userRepository.save(user);
-                })
-                .map(userMapper::toUpdateUserResponse)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        userMapper.updateUser(user, request);
+
+        return userMapper.toUpdateUserResponse(userRepository.save(user));
     }
 
     @Transactional

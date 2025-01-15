@@ -1,8 +1,8 @@
 package com.shongon.identity_service.controller;
 
-import com.shongon.identity_service.dto.request.CreateUserRequest;
-import com.shongon.identity_service.dto.request.UpdateUserRequest;
-import com.shongon.identity_service.dto.response.*;
+import com.shongon.identity_service.dto.request.user.CreateUserRequest;
+import com.shongon.identity_service.dto.request.user.UpdateUserRequest;
+import com.shongon.identity_service.dto.response.user.*;
 import com.shongon.identity_service.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;

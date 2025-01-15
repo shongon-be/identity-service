@@ -1,11 +1,11 @@
 package com.shongon.identity_service.mapper;
 
-import com.shongon.identity_service.dto.request.CreateUserRequest;
-import com.shongon.identity_service.dto.request.UpdateUserRequest;
-import com.shongon.identity_service.dto.response.CreateUserResponse;
-import com.shongon.identity_service.dto.response.GetAllUsersResponse;
-import com.shongon.identity_service.dto.response.UpdateUserResponse;
-import com.shongon.identity_service.dto.response.ViewUserResponse;
+import com.shongon.identity_service.dto.request.user.CreateUserRequest;
+import com.shongon.identity_service.dto.request.user.UpdateUserRequest;
+import com.shongon.identity_service.dto.response.user.CreateUserResponse;
+import com.shongon.identity_service.dto.response.user.GetAllUsersResponse;
+import com.shongon.identity_service.dto.response.user.UpdateUserResponse;
+import com.shongon.identity_service.dto.response.user.ViewUserResponse;
 import com.shongon.identity_service.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

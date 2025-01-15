@@ -1,4 +1,4 @@
-package com.shongon.identity_service.dto.response;
+package com.shongon.identity_service.dto.response.user;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.shongon.identity_service.config.CustomLocalDateTimeSerializer;

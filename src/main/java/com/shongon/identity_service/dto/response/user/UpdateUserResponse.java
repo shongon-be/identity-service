@@ -1,4 +1,4 @@
-package com.shongon.identity_service.dto.response;
+package com.shongon.identity_service.dto.response.user;
 
 import lombok.AccessLevel;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.shongon.identity_service.exception;
 
-import com.shongon.identity_service.dto.response.ApiResponse;
+import com.shongon.identity_service.dto.response.user.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;

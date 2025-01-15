@@ -1,4 +1,4 @@
-package com.shongon.identity_service.dto.response;
+package com.shongon.identity_service.dto.response.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
