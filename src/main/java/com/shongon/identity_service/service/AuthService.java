@@ -38,6 +38,7 @@ public class AuthService {
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
 
+//    Login & get token
     public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
         var user = userRepository.findByUsername(authRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -48,7 +49,7 @@ public class AuthService {
                 , user.getPassword());
 
         if (!isAuthenticated)
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
+            throw new AppException(ErrorCode.LOGIN_FAILED);
 
         var token = generateToken(authRequest.getUsername());
 
@@ -58,6 +59,7 @@ public class AuthService {
                 .build();
     }
 
+//  Introspect token
     public IntrospectResponse introspect(IntrospectRequest introspectRequest)
             throws JOSEException, ParseException {
         var token = introspectRequest.getToken();
@@ -75,6 +77,8 @@ public class AuthService {
                 .build();
     }
 
+
+//    Generate token
     private String generateToken(String username) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
