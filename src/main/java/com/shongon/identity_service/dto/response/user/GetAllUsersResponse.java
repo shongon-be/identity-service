@@ -11,9 +11,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GetAllUsersResponse {
 
