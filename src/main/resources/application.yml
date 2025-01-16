@@ -11,6 +11,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    open-in-view: off
 
 jwt:
   signerKey: "4rIPdLH9nyMeUAMuzOBnuOOQbOYNxhdgDACzaxJhgNQoYO/XEhENk7mqakChG/Yr"
