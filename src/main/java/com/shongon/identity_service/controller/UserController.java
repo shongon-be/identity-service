@@ -8,10 +8,13 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -21,37 +24,43 @@ public class UserController {
 
     @PostMapping("/register")
     public ApiResponse<CreateUserResponse> register(@RequestBody @Valid CreateUserRequest request) {
-        ApiResponse<CreateUserResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.createUser(request));
-        return apiResponse;
+       return ApiResponse.<CreateUserResponse>builder()
+               .result(userService.createUser(request))
+               .build();
     }
 
     @GetMapping("/view-all")
     public ApiResponse<List<GetAllUsersResponse>> getAllUsers() {
-        ApiResponse<List<GetAllUsersResponse>> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.getAllUsers());
-        return apiResponse;
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        log.info("Username: {}", authentication.getName());
+        authentication.getAuthorities().forEach(grantedAuthority ->
+                log.info("GrantedAuthority: {}", grantedAuthority));
+
+        return ApiResponse.<List<GetAllUsersResponse>>builder()
+                .result(userService.getAllUsers())
+                .build();
     }
 
     @GetMapping("/{userId}")
     public ApiResponse<ViewUserResponse> getUserById(@PathVariable String userId) {
-        ApiResponse<ViewUserResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.getUserById(userId));
-        return apiResponse;
+        return ApiResponse.<ViewUserResponse>builder()
+                .result(userService.getUserById(userId))
+                .build();
     }
 
     @PutMapping("/update/{userId}")
     public ApiResponse<UpdateUserResponse> updateUser(@PathVariable String userId, @RequestBody @Valid UpdateUserRequest request) {
-        ApiResponse<UpdateUserResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.updateUser(userId, request));
-        return apiResponse;
+        return ApiResponse.<UpdateUserResponse>builder()
+                .result(userService.updateUser(userId, request))
+                .build();
     }
 
     @DeleteMapping("/delete/{userId}")
     public ApiResponse<String> deleteUser(@PathVariable String userId) {
-        ApiResponse<String> apiResponse = new ApiResponse<>();
         userService.deleteUser(userId);
-        apiResponse.setResult("User has been deleted!");
-        return apiResponse;
+        return ApiResponse.<String>builder()
+                .result("User has been deleted!")
+                .build();
     }
 }

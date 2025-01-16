@@ -1,5 +1,6 @@
 package com.shongon.identity_service.config;
 
+import com.shongon.identity_service.enums.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -34,10 +37,14 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET,"/users/view-all").hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder()))
+                .jwt(jwtConfigurer ->
+                        jwtConfigurer.decoder(jwtDecoder())
+                                .jwtAuthenticationConverter(converter())
+                )
         );
 
         return httpSecurity.build();
@@ -51,6 +58,17 @@ public class SecurityConfig {
                 .withSecretKey(secretKeySpec)
                 .macAlgorithm(MacAlgorithm.HS512)
                 .build();
+    }
+
+    @Bean
+    JwtAuthenticationConverter converter(){
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+
+        return converter;
     }
 
     @Bean
