@@ -1,26 +1,32 @@
 package com.shongon.identity_service.exception;
 
 import com.shongon.identity_service.dto.response.user.ApiResponse;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.text.ParseException;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 //    Handling unexpected error
     @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<ApiResponse> handlingUncategorizedException() {
+    public ResponseEntity<ApiResponse> handlingUncategorizedException(RuntimeException e) {
+        log.error("Exception: ", e);
+
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(ErrorCode.UNCATEGORIZED.getCode());
         apiResponse.setMessage(ErrorCode.UNCATEGORIZED.getMessage());
 
-        return ResponseEntity.badRequest().body(apiResponse);
+        return ResponseEntity
+                .status(ErrorCode.UNCATEGORIZED.getStatusCode())
+                .body(apiResponse);
     }
 
 //    Handling invalid token
@@ -31,7 +37,9 @@ public class GlobalExceptionHandler {
         apiResponse.setCode(ErrorCode.INVALID_TOKEN.getCode());
         apiResponse.setMessage(ErrorCode.INVALID_TOKEN.getMessage());
 
-        return ResponseEntity.badRequest().body(apiResponse);
+        return ResponseEntity
+                .status(ErrorCode.INVALID_TOKEN.getStatusCode())
+                .body(apiResponse);
     }
 
     //    Handling invalid permission
@@ -42,10 +50,12 @@ public class GlobalExceptionHandler {
         apiResponse.setCode(ErrorCode.INVALID_PERMISSION.getCode());
         apiResponse.setMessage(ErrorCode.INVALID_PERMISSION.getMessage());
 
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiResponse);
+        return ResponseEntity
+                .status(ErrorCode.INVALID_PERMISSION.getStatusCode())
+                .body(apiResponse);
     }
 
-//    Handling application error
+//    Handling application exceptions
     @ExceptionHandler(value = AppException.class)
     public ResponseEntity<ApiResponse> handlingAppException(AppException e) {
         ErrorCode errorCode = e.getErrorCode();
@@ -54,7 +64,9 @@ public class GlobalExceptionHandler {
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
 
-        return ResponseEntity.badRequest().body(apiResponse);
+        return ResponseEntity
+                .status(errorCode.getStatusCode())
+                .body(apiResponse);
     }
 
 //    Handling typo error in validation
@@ -73,7 +85,9 @@ public class GlobalExceptionHandler {
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
 
-        return ResponseEntity.badRequest().body(apiResponse);
+        return ResponseEntity
+                .status(errorCode.getStatusCode())
+                .body(apiResponse);
     }
 
 }

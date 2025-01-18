@@ -45,6 +45,8 @@ public class SecurityConfig {
                         jwtConfigurer.decoder(jwtDecoder())
                                 .jwtAuthenticationConverter(converter())
                 )
+                // Handling invalid token (invalid or expired)
+                .authenticationEntryPoint(new JwtAuthEntryPoint())
         );
 
         return httpSecurity.build();
