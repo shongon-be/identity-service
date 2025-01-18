@@ -14,11 +14,6 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateUserRequest {
-
-    @Size(min = 8, message = "INVALID_PASSWORD")
-    @NotBlank
-    String password;
-
     @NotBlank
     String firstName;
 

@@ -19,7 +19,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -36,6 +35,7 @@ import java.util.StringJoiner;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthService {
     UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -45,8 +45,6 @@ public class AuthService {
     public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
         var user = userRepository.findByUsername(authRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
         boolean isAuthenticated =  passwordEncoder.matches(authRequest.getPassword()
                 , user.getPassword());

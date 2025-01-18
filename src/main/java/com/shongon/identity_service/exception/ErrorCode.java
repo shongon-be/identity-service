@@ -15,6 +15,7 @@ public enum ErrorCode {
 
     LOGIN_FAILED(400, "Username or password is incorrect"),
     INVALID_TOKEN(1002, "Invalid Token"),
+    INVALID_PERMISSION(1003, "You do not have permission to access this resource"),
     ;
 
     ErrorCode(int code, String message) {

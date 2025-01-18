@@ -1,7 +1,9 @@
 package com.shongon.identity_service.exception;
 
 import com.shongon.identity_service.dto.response.user.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +32,17 @@ public class GlobalExceptionHandler {
         apiResponse.setMessage(ErrorCode.INVALID_TOKEN.getMessage());
 
         return ResponseEntity.badRequest().body(apiResponse);
+    }
+
+    //    Handling invalid permission
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public ResponseEntity<ApiResponse> handlingInvalidPermission(AccessDeniedException e) {
+        ApiResponse apiResponse = new ApiResponse();
+
+        apiResponse.setCode(ErrorCode.INVALID_PERMISSION.getCode());
+        apiResponse.setMessage(ErrorCode.INVALID_PERMISSION.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiResponse);
     }
 
 //    Handling application error

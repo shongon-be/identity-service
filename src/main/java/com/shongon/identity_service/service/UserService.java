@@ -16,7 +16,9 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,35 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+
+    @PostAuthorize("returnObject.username == authentication.name")
+    public ViewUserResponse getMyInfo(){
+        var context = SecurityContextHolder.getContext();
+        String whoIsLogged = context.getAuthentication().getName();
+
+        User info = userRepository.findByUsername(whoIsLogged).orElseThrow(() ->
+                new AppException(ErrorCode.USER_NOT_FOUND));
+
+        return userMapper.toViewUserResponse(info);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public List<GetAllUsersResponse> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(userMapper::toGetAllUserResponse)
+                .toList();
+    }
+
+    // Kiểm tra xem user đang login có đang lấy đúng id của minh không
+    // @PostAuthorize("returnObject.username == authentication.name")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public ViewUserResponse getUserById(String id) {
+        return userMapper.toViewUserResponse(userRepository.findById(id).
+                orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
+    }
 
     @Transactional
     public CreateUserResponse createUser(CreateUserRequest request) {
@@ -47,20 +78,7 @@ public class UserService {
 
     }
 
-    @Transactional
-    public List<GetAllUsersResponse> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
-                .map(userMapper::toGetAllUserResponse)
-                .toList();
-    }
-
-    @Transactional
-    public ViewUserResponse getUserById(String id) {
-        return userMapper.toViewUserResponse(userRepository.findById(id).
-                orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
-    }
-
+    @PreAuthorize("@userRepository.findById(#userId).get().username == authentication.name || hasRole('ADMIN')")
     @Transactional
     public UpdateUserResponse updateUser(String userId, UpdateUserRequest request) {
         User user = userRepository.findById(userId)
@@ -71,6 +89,7 @@ public class UserService {
         return userMapper.toUpdateUserResponse(userRepository.save(user));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void deleteUser(String userId) {
         if (!userRepository.existsById(userId))

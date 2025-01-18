@@ -8,13 +8,11 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
+
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -22,21 +20,15 @@ import java.util.List;
 public class UserController {
     UserService userService;
 
-    @PostMapping("/register")
-    public ApiResponse<CreateUserResponse> register(@RequestBody @Valid CreateUserRequest request) {
-       return ApiResponse.<CreateUserResponse>builder()
-               .result(userService.createUser(request))
+    @GetMapping("/my-info")
+   public ApiResponse<ViewUserResponse> getMyInfo(){
+       return ApiResponse.<ViewUserResponse>builder()
+               .result(userService.getMyInfo())
                .build();
-    }
+   }
 
     @GetMapping("/view-all")
     public ApiResponse<List<GetAllUsersResponse>> getAllUsers() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        log.info("Username: {}", authentication.getName());
-        authentication.getAuthorities().forEach(grantedAuthority ->
-                log.info("GrantedAuthority: {}", grantedAuthority));
-
         return ApiResponse.<List<GetAllUsersResponse>>builder()
                 .result(userService.getAllUsers())
                 .build();
@@ -46,6 +38,13 @@ public class UserController {
     public ApiResponse<ViewUserResponse> getUserById(@PathVariable String userId) {
         return ApiResponse.<ViewUserResponse>builder()
                 .result(userService.getUserById(userId))
+                .build();
+    }
+
+    @PostMapping("/register")
+    public ApiResponse<CreateUserResponse> register(@RequestBody @Valid CreateUserRequest request) {
+        return ApiResponse.<CreateUserResponse>builder()
+                .result(userService.createUser(request))
                 .build();
     }
 
