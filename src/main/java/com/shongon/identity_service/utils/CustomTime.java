@@ -1,4 +1,4 @@
-package com.shongon.identity_service.config;
+package com.shongon.identity_service.utils;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class CustomLocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
+public class CustomTime extends JsonSerializer<LocalDateTime> {
     private static final DateTimeFormatter formatter =
             DateTimeFormatter.ofPattern("HH:mm:ss | dd-MM-yyyy");
 

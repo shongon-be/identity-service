@@ -2,7 +2,7 @@ package com.shongon.identity_service.dto.response.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.shongon.identity_service.config.CustomLocalDateTimeSerializer;
+import com.shongon.identity_service.utils.CustomTime;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -28,9 +28,9 @@ public class GetAllUsersResponse {
 
     Set<String> roles;
 
-    @JsonSerialize(using = CustomLocalDateTimeSerializer.class)
+    @JsonSerialize(using = CustomTime.class)
     LocalDateTime createdAt;
 
-    @JsonSerialize(using = CustomLocalDateTimeSerializer.class)
+    @JsonSerialize(using = CustomTime.class)
     LocalDateTime updatedAt;
 }
