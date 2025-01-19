@@ -25,7 +25,9 @@ public class User {
     String firstName;
     String lastName;
     LocalDate birthDate;
-    Set<String> roles;
+
+    @ManyToMany
+    Set<Role> roles;
 
     @CreationTimestamp
     @Column(updatable = false)

@@ -12,7 +12,6 @@ import com.shongon.identity_service.exception.AppException;
 import com.shongon.identity_service.exception.ErrorCode;
 import com.shongon.identity_service.mapper.UserMapper;
 import com.shongon.identity_service.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +34,7 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     @PostAuthorize("returnObject.username == authentication.name")
+    @Transactional(readOnly = true)
     public ViewUserResponse getMyInfo(){
         var context = SecurityContextHolder.getContext();
         String whoIsLogged = context.getAuthentication().getName();
@@ -45,7 +46,7 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @Transactional
+    @Transactional(readOnly = true)
     public List<GetAllUsersResponse> getAllUsers() {
         return userRepository.findAll()
                 .stream()
@@ -56,7 +57,7 @@ public class UserService {
     // Kiểm tra xem user đang login có đang lấy đúng id của minh không
     // @PostAuthorize("returnObject.username == authentication.name")
     @PreAuthorize("hasRole('ADMIN')")
-    @Transactional
+    @Transactional(readOnly = true)
     public ViewUserResponse getUserById(String id) {
         return userMapper.toViewUserResponse(userRepository.findById(id).
                 orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
@@ -70,9 +71,9 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-        user.setRoles(roles);
+//        HashSet<String> roles = new HashSet<>();
+//        roles.add(Role.USER.name());
+//       user.setRoles(roles);
 
         return userMapper.toCreateUserResponse(userRepository.save(user));
 

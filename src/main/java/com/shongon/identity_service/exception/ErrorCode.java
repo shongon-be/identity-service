@@ -16,8 +16,14 @@ public enum ErrorCode {
     INVALID_PASSWORD(400, HttpStatus.BAD_REQUEST,"Password must be at least 8 characters"),
 
     LOGIN_FAILED(401, HttpStatus.UNAUTHORIZED,"Username or password is incorrect"),
-    INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED,"Invalid Token"),
+    INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED,"Invalid/Expired Token"),
     INVALID_PERMISSION(403, HttpStatus.FORBIDDEN,"You do not have permission to access this resource"),
+
+    PERMISSION_EXISTED(400, HttpStatus.BAD_REQUEST,"Permission already existed"),
+    PERMISSION_NOT_FOUND(404, HttpStatus.NOT_FOUND,"Permission not found"),
+
+    ROLE_EXISTED(409, HttpStatus.CONFLICT,"Role already existed"),
+    ROLE_NOT_FOUND(404, HttpStatus.NOT_FOUND,"Role not found"),
     ;
 
     ErrorCode(int code, HttpStatusCode statusCode,String message) {

@@ -16,5 +16,5 @@ public class ViewUserResponse {
     String firstName;
     String lastName;
     LocalDate birthDate;
-    Set<String> roles;
+//    Set<String> roles;
 }

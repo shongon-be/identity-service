@@ -26,7 +26,7 @@ public class GetAllUsersResponse {
 
     LocalDate birthDate;
 
-    Set<String> roles;
+//    Set<String> roles;
 
     @JsonSerialize(using = CustomTime.class)
     LocalDateTime createdAt;
