@@ -1,5 +1,6 @@
 package com.shongon.identity_service.dto.request.user;
 
+import com.shongon.identity_service.utils.validation.DobConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -29,6 +30,7 @@ public class CreateUserRequest {
     @NotBlank
     String lastName;
 
+    @DobConstraint(min = 18, message = "INVALID_DOB")
     @NotNull
     LocalDate birthDate;
 }

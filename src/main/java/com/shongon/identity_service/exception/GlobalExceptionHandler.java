@@ -1,6 +1,7 @@
 package com.shongon.identity_service.exception;
 
 import com.shongon.identity_service.dto.response.user.ApiResponse;
+import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -9,10 +10,15 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.text.ParseException;
+import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final String MIN_ATTRIBUTE = "min";
+
 //    Handling unexpected error
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ApiResponse> handlingUncategorizedException(RuntimeException e) {
@@ -31,6 +37,8 @@ public class GlobalExceptionHandler {
 //    Handling invalid token
     @ExceptionHandler(value = ParseException.class)
     public ResponseEntity<ApiResponse> handlingInvalidToken(ParseException e) {
+        log.error("Invalid/Expired Token: ", e);
+
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(ErrorCode.INVALID_TOKEN.getCode());
@@ -44,6 +52,8 @@ public class GlobalExceptionHandler {
     //    Handling invalid permission
     @ExceptionHandler(value = AccessDeniedException.class)
     public ResponseEntity<ApiResponse> handlingInvalidPermission(AccessDeniedException e) {
+        log.error("Permission denied: ", e);
+
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(ErrorCode.INVALID_PERMISSION.getCode());
@@ -57,6 +67,8 @@ public class GlobalExceptionHandler {
 //    Handling application exceptions
     @ExceptionHandler(value = AppException.class)
     public ResponseEntity<ApiResponse> handlingAppException(AppException e) {
+        log.error("AppException: ", e);
+
         ErrorCode errorCode = e.getErrorCode();
         ApiResponse apiResponse = new ApiResponse();
 
@@ -71,22 +83,40 @@ public class GlobalExceptionHandler {
 //    Handling typo error in validation
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException e) {
+
         String enumKey = e.getBindingResult().getFieldError().getDefaultMessage();
 
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
 
+        Map<String, Object> attributes = null;
+
         try {
             errorCode = ErrorCode.valueOf(enumKey);
+
+            var constraintViolations = e.getBindingResult()
+                    .getAllErrors().get(0).unwrap(ConstraintViolation.class);
+
+            attributes = constraintViolations.getConstraintDescriptor().getAttributes();
+
+            log.warn(attributes.toString());
         } catch (IllegalArgumentException ignored){}
 
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(errorCode.getMessage());
+        apiResponse.setMessage(
+                Objects.nonNull(attributes) ? mapAttribute(errorCode.getMessage(), attributes) :
+                errorCode.getMessage()
+        );
 
         return ResponseEntity
                 .status(errorCode.getStatusCode())
                 .body(apiResponse);
     }
 
+    private String mapAttribute(String message, Map<String, Object> attribute) {
+        String minValue = attribute.get(MIN_ATTRIBUTE).toString();
+
+        return message.replace("{" + MIN_ATTRIBUTE + "}", minValue);
+    }
 }

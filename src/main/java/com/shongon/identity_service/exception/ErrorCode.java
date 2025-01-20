@@ -12,8 +12,9 @@ public enum ErrorCode {
     USER_EXISTED(400, HttpStatus.BAD_REQUEST,"User already existed"),
     USER_NOT_FOUND(404, HttpStatus.NOT_FOUND,"User not found"),
 
-    INVALID_USERNAME(400, HttpStatus.BAD_REQUEST,"Username must be at least 3 characters"),
-    INVALID_PASSWORD(400, HttpStatus.BAD_REQUEST,"Password must be at least 8 characters"),
+    INVALID_USERNAME(400, HttpStatus.BAD_REQUEST,"Username must be at least {min} characters"),
+    INVALID_PASSWORD(400, HttpStatus.BAD_REQUEST,"Password must be at least {min} characters"),
+    INVALID_DOB(400,HttpStatus.BAD_REQUEST,"Your age must be at least {min} years old"),
 
     LOGIN_FAILED(401, HttpStatus.UNAUTHORIZED,"Username or password is incorrect"),
     INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED,"Invalid/Expired Token"),
