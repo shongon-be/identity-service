@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
@@ -42,6 +43,7 @@ public class AuthService {
     protected String SIGNER_KEY;
 
 //    Login & get token
+    @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
         var user = userRepository.findByUsername(authRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -61,6 +63,7 @@ public class AuthService {
     }
 
 //  Introspect token
+    @Transactional
     public IntrospectResponse introspect(IntrospectRequest introspectRequest)
             throws JOSEException, ParseException {
         var token = introspectRequest.getToken();
@@ -108,8 +111,16 @@ public class AuthService {
 
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-//        if (!CollectionUtils.isEmpty(user.getRoles()))
-//            user.getRoles().forEach(stringJoiner::add);
+
+        if (!CollectionUtils.isEmpty(user.getRoles()))
+            user.getRoles().forEach(role ->{
+
+                stringJoiner.add("ROLE_" + role.getRole_name());
+
+                if (!CollectionUtils.isEmpty(role.getPermissions()))
+                    role.getPermissions()
+                            .forEach(permission -> stringJoiner.add(permission.getPermission_name()));
+            });
 
         return stringJoiner.toString();
     }

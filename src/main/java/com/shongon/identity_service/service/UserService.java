@@ -7,10 +7,10 @@ import com.shongon.identity_service.dto.response.user.GetAllUsersResponse;
 import com.shongon.identity_service.dto.response.user.UpdateUserResponse;
 import com.shongon.identity_service.dto.response.user.ViewUserResponse;
 import com.shongon.identity_service.entity.User;
-import com.shongon.identity_service.enums.Role;
 import com.shongon.identity_service.exception.AppException;
 import com.shongon.identity_service.exception.ErrorCode;
 import com.shongon.identity_service.mapper.UserMapper;
+import com.shongon.identity_service.repository.RoleRepository;
 import com.shongon.identity_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,7 @@ import java.util.List;
 public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
+    RoleRepository roleRepository;
     PasswordEncoder passwordEncoder;
 
     @PostAuthorize("returnObject.username == authentication.name")
@@ -71,9 +73,9 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-//        HashSet<String> roles = new HashSet<>();
-//        roles.add(Role.USER.name());
-//       user.setRoles(roles);
+        var userRole = roleRepository.findById("USER")
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        user.setRoles(new HashSet<>(Set.of(userRole)));
 
         return userMapper.toCreateUserResponse(userRepository.save(user));
 
@@ -86,6 +88,12 @@ public class UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         userMapper.updateUser(user, request);
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        var roles = roleRepository.findAllById(request.getRoles());
+
+        user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUpdateUserResponse(userRepository.save(user));
     }

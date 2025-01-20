@@ -23,6 +23,7 @@ public class UserController {
     @GetMapping("/my-info")
    public ApiResponse<ViewUserResponse> getMyInfo(){
        return ApiResponse.<ViewUserResponse>builder()
+               .code(200)
                .result(userService.getMyInfo())
                .build();
    }
@@ -30,6 +31,7 @@ public class UserController {
     @GetMapping("/view-all")
     public ApiResponse<List<GetAllUsersResponse>> getAllUsers() {
         return ApiResponse.<List<GetAllUsersResponse>>builder()
+                .code(200)
                 .result(userService.getAllUsers())
                 .build();
     }
@@ -37,6 +39,7 @@ public class UserController {
     @GetMapping("/{userId}")
     public ApiResponse<ViewUserResponse> getUserById(@PathVariable String userId) {
         return ApiResponse.<ViewUserResponse>builder()
+                .code(200)
                 .result(userService.getUserById(userId))
                 .build();
     }
@@ -44,6 +47,7 @@ public class UserController {
     @PostMapping("/register")
     public ApiResponse<CreateUserResponse> register(@RequestBody @Valid CreateUserRequest request) {
         return ApiResponse.<CreateUserResponse>builder()
+                .code(200)
                 .result(userService.createUser(request))
                 .build();
     }
@@ -51,6 +55,7 @@ public class UserController {
     @PutMapping("/update/{userId}")
     public ApiResponse<UpdateUserResponse> updateUser(@PathVariable String userId, @RequestBody @Valid UpdateUserRequest request) {
         return ApiResponse.<UpdateUserResponse>builder()
+                .code(200)
                 .result(userService.updateUser(userId, request))
                 .build();
     }
@@ -59,6 +64,7 @@ public class UserController {
     public ApiResponse<String> deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);
         return ApiResponse.<String>builder()
+                .code(200)
                 .result("User has been deleted!")
                 .build();
     }
