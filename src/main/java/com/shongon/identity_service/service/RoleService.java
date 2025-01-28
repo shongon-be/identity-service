@@ -14,6 +14,7 @@ import com.shongon.identity_service.repository.RoleRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@PreAuthorize("hasRole('ADMIN')")
 public class RoleService {
     RoleRepository roleRepo;
     RoleMapper roleMapper;

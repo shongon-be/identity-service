@@ -3,6 +3,7 @@ package com.shongon.identity_service.controller;
 import com.nimbusds.jose.JOSEException;
 import com.shongon.identity_service.dto.request.auth.AuthenticationRequest;
 import com.shongon.identity_service.dto.request.auth.IntrospectRequest;
+import com.shongon.identity_service.dto.request.auth.LogoutRequest;
 import com.shongon.identity_service.dto.response.auth.AuthenticationResponse;
 import com.shongon.identity_service.dto.response.auth.IntrospectResponse;
 import com.shongon.identity_service.dto.response.user.ApiResponse;
@@ -24,22 +25,36 @@ import java.text.ParseException;
 public class AuthController {
     AuthService authService;
 
+    @PostMapping("/introspect")
+    public ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest introspectRequest)
+            throws ParseException, JOSEException {
+
+        var result = authService.introspect(introspectRequest);
+
+        return ApiResponse.<IntrospectResponse>builder()
+                .code(200)
+                .result(result)
+                .build();
+    }
+
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authRequest) {
         var result = authService.authenticate(authRequest);
+
         return ApiResponse.<AuthenticationResponse>builder()
                 .code(200)
                 .result(result)
                 .build();
     }
 
-    @PostMapping("/introspect")
-    public ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest introspectRequest)
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout(@RequestBody LogoutRequest logoutRequest)
             throws ParseException, JOSEException {
-        var result = authService.introspect(introspectRequest);
-        return ApiResponse.<IntrospectResponse>builder()
+
+        authService.logout(logoutRequest);
+
+        return ApiResponse.<Void>builder()
                 .code(200)
-                .result(result)
                 .build();
     }
 }

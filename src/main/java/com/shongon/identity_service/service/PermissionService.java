@@ -20,14 +20,13 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@PreAuthorize("hasRole('ADMIN')")
 public class PermissionService {
     PermissionRepository permissionRepo;
     PermissionMapper permissionMapper;
 
-
     // Create permission
     @Transactional
-//    @PreAuthorize("hasRole('ADMIN')")
     public CreatePermissionResponse createPermission(CreatePermissionRequest request) {
         if (permissionRepo.existsById(request.getPermission_name()))
             throw new AppException(ErrorCode.PERMISSION_EXISTED);
@@ -40,7 +39,6 @@ public class PermissionService {
 
     //Get list of permissions
     @Transactional
-//    @PreAuthorize("hasRole('ADMIN')")
     public List<GetAllPermissionsResponse> getAllPermissions() {
         return permissionRepo.findAll()
                 .stream()
@@ -49,7 +47,6 @@ public class PermissionService {
     }
 
     @Transactional
-//    @PreAuthorize("hasRole('ADMIN')")
     public void deletePermission(String permission_name){
         if (!permissionRepo.existsById(permission_name))
             throw new AppException(ErrorCode.PERMISSION_NOT_FOUND);

@@ -1,4 +1,4 @@
-package com.shongon.identity_service.config;
+package com.shongon.identity_service.config.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shongon.identity_service.dto.response.user.ApiResponse;
