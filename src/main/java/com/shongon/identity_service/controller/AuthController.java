@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import com.shongon.identity_service.dto.request.auth.AuthenticationRequest;
 import com.shongon.identity_service.dto.request.auth.IntrospectRequest;
 import com.shongon.identity_service.dto.request.auth.LogoutRequest;
+import com.shongon.identity_service.dto.request.auth.RefreshRequest;
 import com.shongon.identity_service.dto.response.auth.AuthenticationResponse;
 import com.shongon.identity_service.dto.response.auth.IntrospectResponse;
 import com.shongon.identity_service.dto.response.user.ApiResponse;
@@ -29,21 +30,17 @@ public class AuthController {
     public ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest introspectRequest)
             throws ParseException, JOSEException {
 
-        var result = authService.introspect(introspectRequest);
-
         return ApiResponse.<IntrospectResponse>builder()
                 .code(200)
-                .result(result)
+                .result(authService.introspect(introspectRequest))
                 .build();
     }
 
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authRequest) {
-        var result = authService.authenticate(authRequest);
-
         return ApiResponse.<AuthenticationResponse>builder()
                 .code(200)
-                .result(result)
+                .result(authService.authenticate(authRequest))
                 .build();
     }
 
@@ -55,6 +52,16 @@ public class AuthController {
 
         return ApiResponse.<Void>builder()
                 .code(200)
+                .build();
+    }
+
+    @PostMapping("refresh")
+    public ApiResponse<AuthenticationResponse> refreshToken (@RequestBody RefreshRequest refreshRequest)
+            throws ParseException, JOSEException {
+
+        return ApiResponse.<AuthenticationResponse>builder()
+                .code(200)
+                .result(authService.refreshToken(refreshRequest))
                 .build();
     }
 }

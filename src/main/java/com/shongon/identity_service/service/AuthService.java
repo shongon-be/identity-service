@@ -8,6 +8,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.shongon.identity_service.dto.request.auth.AuthenticationRequest;
 import com.shongon.identity_service.dto.request.auth.IntrospectRequest;
 import com.shongon.identity_service.dto.request.auth.LogoutRequest;
+import com.shongon.identity_service.dto.request.auth.RefreshRequest;
 import com.shongon.identity_service.dto.response.auth.AuthenticationResponse;
 import com.shongon.identity_service.dto.response.auth.IntrospectResponse;
 import com.shongon.identity_service.entity.InvalidatedToken;
@@ -72,12 +73,14 @@ public class AuthService {
         var user = userRepository.findByUsername(authRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
+        // Check if password entered match with password register
         boolean isAuthenticated =  passwordEncoder.matches(authRequest.getPassword()
                 , user.getPassword());
 
         if (!isAuthenticated)
             throw new AppException(ErrorCode.LOGIN_FAILED);
 
+        // Sign a token with user information
         var token = generateToken(user);
 
         return AuthenticationResponse.builder()
@@ -87,7 +90,9 @@ public class AuthService {
     }
 
     // Log out & disable token
+    @Transactional
     public void logout(LogoutRequest logoutRequest) throws ParseException, JOSEException {
+        // Check token validity
         var signToken = verifyToken(logoutRequest.getToken());
 
         String jit = signToken.getJWTClaimsSet().getJWTID();
@@ -102,7 +107,41 @@ public class AuthService {
         tokenRepository.save(invalidatedToken);
     }
 
+    @Transactional
+    public AuthenticationResponse refreshToken (RefreshRequest request)
+            throws ParseException, JOSEException {
 
+        // Check token validity
+        var checkToken = verifyToken(request.getToken());
+
+        // Invalidate old token - logout
+        var checkJit = checkToken.getJWTClaimsSet().getJWTID();
+        var checkExpTime = checkToken.getJWTClaimsSet().getExpirationTime();
+
+        // Implement logout
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(checkJit)
+                .expTime(checkExpTime)
+                .build();
+
+        tokenRepository.save(invalidatedToken);
+
+        // Issuse new token - authenticate
+
+            // Get username of recent token
+        var username = checkToken.getJWTClaimsSet().getSubject();
+
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+            // Sign new token
+        var token = generateToken(user);
+
+        return AuthenticationResponse.builder()
+                .isAuthenticated(true)
+                .token(token)
+                .build();
+    }
 
 
 //    Generate token
@@ -114,6 +153,7 @@ public class AuthService {
                 .issuer("com.shongon")
                 .issueTime(new Date())
                 .expirationTime(new Date(
+                        // Exprire after 1 hour
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
                 .jwtID(UUID.randomUUID().toString())
@@ -133,7 +173,7 @@ public class AuthService {
         }
     }
 
-    // Build content of token - Payload
+    // Build custom content of token in Payload - role
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
 

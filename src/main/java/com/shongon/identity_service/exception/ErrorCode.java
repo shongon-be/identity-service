@@ -18,6 +18,7 @@ public enum ErrorCode {
 
     LOGIN_FAILED(401, HttpStatus.UNAUTHORIZED,"Username or password is incorrect"),
     INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED,"Invalid/Expired Token"),
+    UNAUTHENTICATED(401, HttpStatus.UNAUTHORIZED,"Unauthenticated"),
     INVALID_PERMISSION(403, HttpStatus.FORBIDDEN,"You do not have permission to access this resource"),
 
     PERMISSION_EXISTED(400, HttpStatus.BAD_REQUEST,"Permission already existed"),
