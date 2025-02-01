@@ -14,4 +14,6 @@ spring:
     open-in-view: off
 
 jwt:
-  signerKey: "4rIPdLH9nyMeUAMuzOBnuOOQbOYNxhdgDACzaxJhgNQoYO/XEhENk7mqakChG/Yr"
+  signer-key: "4rIPdLH9nyMeUAMuzOBnuOOQbOYNxhdgDACzaxJhgNQoYO/XEhENk7mqakChG/Yr"
+  valid-duration: 3600 # 1 hour in seconds
+  refreshable-duration: 360000 # 100 hours in seconds

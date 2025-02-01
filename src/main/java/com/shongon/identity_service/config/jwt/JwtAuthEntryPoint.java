@@ -12,6 +12,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import java.io.IOException;
 
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
+    // Create custom responses for Authentication errors
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
