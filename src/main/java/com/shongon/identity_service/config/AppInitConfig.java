@@ -1,7 +1,9 @@
 package com.shongon.identity_service.config;
 
 import com.shongon.identity_service.entity.User;
-import com.shongon.identity_service.enums.Role;
+import com.shongon.identity_service.exception.AppException;
+import com.shongon.identity_service.exception.ErrorCode;
+import com.shongon.identity_service.repository.RoleRepository;
 import com.shongon.identity_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
+import java.util.Set;
 
 @Slf4j
 @Configuration
@@ -20,18 +23,20 @@ import java.util.HashSet;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AppInitConfig {
 
+    RoleRepository roleRepository;
     PasswordEncoder passwordEncoder;
 
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
             if (userRepository.findByUsername("admin").isEmpty()){
-                var adminRole = new HashSet<String>();
-                adminRole.add(Role.ADMIN.name());
+                var adminRole = roleRepository.findById("USER")
+                        .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
                 User admin = User.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))
+                        .roles(new HashSet<>(Set.of(adminRole)))
                         .build();
 
                 userRepository.save(admin);
