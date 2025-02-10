@@ -8,6 +8,7 @@ spring:
     url: "jdbc:mysql://127.0.0.1:3307/identity_service"
     username: root
     password: 16102004
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
   jpa:
     hibernate:
       ddl-auto: update
@@ -17,3 +18,4 @@ jwt:
   signer-key: "4rIPdLH9nyMeUAMuzOBnuOOQbOYNxhdgDACzaxJhgNQoYO/XEhENk7mqakChG/Yr"
   valid-duration: 3600 # 1 hour in seconds
   refreshable-duration: 360000 # 100 hours in seconds
+

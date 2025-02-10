@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.when;
 @Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestPropertySource("/test.properties")
 public class UserControllerTest {
 
     @Autowired
@@ -74,10 +76,10 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(content)
                 )
-             // Then
-                // HttpStatusCode = 200
+                // Then
+                    // HttpStatusCode = 200
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                // code in createUserResponse
+                    // code in createUserResponse
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value(200))
                 .andExpect(MockMvcResultMatchers.jsonPath("result.message")
                         .value("Create user success!"));
@@ -105,9 +107,9 @@ public class UserControllerTest {
                         .content(content)
                 )
                 // Then
-                // HttpStatusCode = 200
+                    // HttpStatusCode = 200
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                // code in createUserResponse
+                    // code in createUserResponse
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value(400))
                 .andExpect(MockMvcResultMatchers.jsonPath("message")
                         .value("Username must be at least 3 characters"));
