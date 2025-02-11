@@ -69,8 +69,6 @@ public class UserService {
 
     @Transactional
     public CreateUserResponse createUser(CreateUserRequest request) {
-        log.info("Service: create User");
-
         validateUsername(request.getUsername());
 
         User user = userMapper.createUser(request);

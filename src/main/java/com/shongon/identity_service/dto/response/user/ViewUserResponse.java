@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ViewUserResponse {

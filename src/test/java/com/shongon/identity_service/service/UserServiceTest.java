@@ -2,6 +2,7 @@ package com.shongon.identity_service.service;
 
 import com.shongon.identity_service.dto.request.user.CreateUserRequest;
 import com.shongon.identity_service.dto.response.user.CreateUserResponse;
+import com.shongon.identity_service.dto.response.user.ViewUserResponse;
 import com.shongon.identity_service.entity.Role;
 import com.shongon.identity_service.entity.User;
 import com.shongon.identity_service.exception.AppException;
@@ -14,8 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
-
 import java.time.LocalDate;
 
 import java.util.Optional;
@@ -43,8 +45,9 @@ public class UserServiceTest {
 
     private User user;
     private Role role;
-    private CreateUserRequest request;
-    private CreateUserResponse response;
+    private CreateUserRequest createUserRequest;
+    private CreateUserResponse createUserResponse;
+    private ViewUserResponse viewUserResponse;
 
     @BeforeEach
     void setup() {
@@ -54,7 +57,7 @@ public class UserServiceTest {
                 .role_description("ROLE_USER")
                 .build();
 
-        request = CreateUserRequest.builder()
+        createUserRequest = CreateUserRequest.builder()
                 .username("test")
                 .firstName("test")
                 .lastName("test")
@@ -62,7 +65,7 @@ public class UserServiceTest {
                 .birthDate(birthDate)
                 .build();
 
-        response = CreateUserResponse.builder()
+        createUserResponse = CreateUserResponse.builder()
                 .message("Create user success!")
                 .build();
 
@@ -82,8 +85,9 @@ public class UserServiceTest {
     private void mockDependencies() {
         when(roleRepository.findById("USER")).thenReturn(Optional.of(role));
         when(userMapper.createUser(any())).thenReturn(user);
-        when(userMapper.toCreateUserResponse(any())).thenReturn(response);
+        when(userMapper.toCreateUserResponse(any())).thenReturn(createUserResponse);
     }
+
 
     @Test
     void createUser_validRequest_success() {
@@ -92,22 +96,76 @@ public class UserServiceTest {
         when(userRepository.save(any())).thenReturn(user);
 
         // When
-        var result = userService.createUser(request);
+        var result = userService.createUser(createUserRequest);
 
         // Then
         assertThat(result.getMessage()).isEqualTo("Create user success!");
     }
 
     @Test
-    void createUser_userExisted_failed() {
+    void createUser_userExisted_error() {
         // Given
         when(userRepository.existsByUsername(anyString())).thenReturn(true);
 
         // When
-        var ex = assertThrows(AppException.class, () -> userService.createUser(request));
+        var ex = assertThrows(AppException.class, () -> userService.createUser(createUserRequest));
 
         // Then
         assertThat(ex.getErrorCode().getCode()).isEqualTo(400);
         assertThat(ex.getMessage()).isEqualTo("User already existed");
+    }
+
+    @Test
+    @WithMockUser(username = "test")
+     void getMyInfo_validRequest_success() {
+        // Given
+        when(userRepository.findByUsername(anyString()))
+                .thenReturn(Optional.of(user));
+
+        when(userMapper.toViewUserResponse(any())).thenReturn(
+                ViewUserResponse.builder()
+                        .username("test")
+                        .birthDate(LocalDate.of(1990, 1, 1))
+                        .build()
+        );
+
+        // When
+        var response = userService.getMyInfo();
+
+        // Then
+        assertThat(response.getUsername()).isEqualTo("test");
+        assertThat(response.getBirthDate()).isEqualTo(LocalDate.of(1990, 1, 1));
+    }
+
+    @Test
+    @WithMockUser(username = "hongson")
+    void getMyInfo_invalidUserRequest_failed(){
+        // Given
+        when(userRepository.findByUsername(anyString()))
+                .thenReturn(Optional.of(user));
+        when(userMapper.toViewUserResponse(any())).thenReturn(
+                ViewUserResponse.builder()
+                        .username("test")
+                        .birthDate(LocalDate.of(1990, 1, 1))
+                        .build()
+        );
+
+        // When & Then
+        assertThrows(AuthorizationDeniedException.class, () -> userService.getMyInfo());
+    }
+
+    @Test
+    @WithMockUser(username = "test")
+    void getMyInfo_userNotFound_error() {
+        // Given
+        when(userRepository.findByUsername(anyString()))
+                .thenReturn(Optional.empty());
+
+        // When
+        var ex = assertThrows(AppException.class,() -> userService.getMyInfo());
+
+        // Then
+        assertThat(ex.getErrorCode().getCode()).isEqualTo(404);
+        assertThat(ex.getMessage()).isEqualTo("User not found");
     }
 }
