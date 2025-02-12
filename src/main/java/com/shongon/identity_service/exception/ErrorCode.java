@@ -1,34 +1,35 @@
 package com.shongon.identity_service.exception;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
+import lombok.Getter;
+
 @Getter
 public enum ErrorCode {
-    UNCATEGORIZED(500, HttpStatus.INTERNAL_SERVER_ERROR,"Uncategorized Error"),
-    INVALID_KEY(400, HttpStatus.BAD_REQUEST,"Invalid Message Key"),
+    UNCATEGORIZED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Uncategorized Error"),
+    INVALID_KEY(400, HttpStatus.BAD_REQUEST, "Invalid Message Key"),
 
-    USER_EXISTED(400, HttpStatus.BAD_REQUEST,"User already existed"),
-    USER_NOT_FOUND(404, HttpStatus.NOT_FOUND,"User not found"),
+    USER_EXISTED(400, HttpStatus.BAD_REQUEST, "User already existed"),
+    USER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "User not found"),
 
-    INVALID_USERNAME(400, HttpStatus.BAD_REQUEST,"Username must be at least {min} characters"),
-    INVALID_PASSWORD(400, HttpStatus.BAD_REQUEST,"Password must be at least {min} characters"),
-    INVALID_DOB(400,HttpStatus.BAD_REQUEST,"Your age must be at least {min} years old"),
+    INVALID_USERNAME(400, HttpStatus.BAD_REQUEST, "Username must be at least {min} characters"),
+    INVALID_PASSWORD(400, HttpStatus.BAD_REQUEST, "Password must be at least {min} characters"),
+    INVALID_DOB(400, HttpStatus.BAD_REQUEST, "Your age must be at least {min} years old"),
 
-    LOGIN_FAILED(401, HttpStatus.UNAUTHORIZED,"Username or password is incorrect"),
-    INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED,"Invalid/Expired Token"),
-    UNAUTHENTICATED(401, HttpStatus.UNAUTHORIZED,"Unauthenticated"),
-    INVALID_PERMISSION(403, HttpStatus.FORBIDDEN,"You do not have permission to access this resource"),
+    LOGIN_FAILED(401, HttpStatus.UNAUTHORIZED, "Username or password is incorrect"),
+    INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED, "Invalid/Expired Token"),
+    UNAUTHENTICATED(401, HttpStatus.UNAUTHORIZED, "Unauthenticated"),
+    INVALID_PERMISSION(403, HttpStatus.FORBIDDEN, "You do not have permission to access this resource"),
 
-    PERMISSION_EXISTED(400, HttpStatus.BAD_REQUEST,"Permission already existed"),
-    PERMISSION_NOT_FOUND(404, HttpStatus.NOT_FOUND,"Permission not found"),
+    PERMISSION_EXISTED(400, HttpStatus.BAD_REQUEST, "Permission already existed"),
+    PERMISSION_NOT_FOUND(404, HttpStatus.NOT_FOUND, "Permission not found"),
 
-    ROLE_EXISTED(409, HttpStatus.CONFLICT,"Role already existed"),
-    ROLE_NOT_FOUND(404, HttpStatus.NOT_FOUND,"Role not found"),
+    ROLE_EXISTED(409, HttpStatus.CONFLICT, "Role already existed"),
+    ROLE_NOT_FOUND(404, HttpStatus.NOT_FOUND, "Role not found"),
     ;
 
-    ErrorCode(int code, HttpStatusCode statusCode,String message) {
+    ErrorCode(int code, HttpStatusCode statusCode, String message) {
         this.code = code;
         this.statusCode = statusCode;
         this.message = message;
@@ -37,5 +38,4 @@ public enum ErrorCode {
     private final int code;
     private final HttpStatusCode statusCode;
     private final String message;
-
 }

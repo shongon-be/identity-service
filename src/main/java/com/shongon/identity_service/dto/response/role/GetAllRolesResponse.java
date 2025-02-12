@@ -1,13 +1,13 @@
 package com.shongon.identity_service.dto.response.role;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.shongon.identity_service.dto.response.permission.GetAllPermissionsResponse;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -1,12 +1,13 @@
 package com.shongon.identity_service.entity;
 
+import java.util.Set;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
 
 @Entity
 @Getter
@@ -18,6 +19,7 @@ import java.util.Set;
 public class Role {
     @Id
     String role_name;
+
     String role_description;
 
     // 1 Role has many permissions & 1 permission can belong to mane roles

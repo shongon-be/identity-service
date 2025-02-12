@@ -1,12 +1,13 @@
 package com.shongon.identity_service.dto.response.user;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.shongon.identity_service.dto.response.role.GetAllRolesResponse;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.shongon.identity_service.dto.response.role.GetAllRolesResponse;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @Builder

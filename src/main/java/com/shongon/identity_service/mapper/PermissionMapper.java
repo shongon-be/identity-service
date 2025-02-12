@@ -1,11 +1,12 @@
 package com.shongon.identity_service.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+
 import com.shongon.identity_service.dto.request.permission.CreatePermissionRequest;
 import com.shongon.identity_service.dto.response.permission.CreatePermissionResponse;
 import com.shongon.identity_service.dto.response.permission.GetAllPermissionsResponse;
 import com.shongon.identity_service.entity.Permission;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PermissionMapper {

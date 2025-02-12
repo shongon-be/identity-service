@@ -1,16 +1,18 @@
 package com.shongon.identity_service.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.shongon.identity_service.dto.request.permission.CreatePermissionRequest;
 import com.shongon.identity_service.dto.response.permission.CreatePermissionResponse;
 import com.shongon.identity_service.dto.response.permission.GetAllPermissionsResponse;
 import com.shongon.identity_service.dto.response.user.ApiResponse;
 import com.shongon.identity_service.service.PermissionService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class PermissionController {
     PermissionService permissionService;
 
     @PostMapping("/create")
-    public ApiResponse<CreatePermissionResponse> createPermission (@RequestBody CreatePermissionRequest request) {
+    public ApiResponse<CreatePermissionResponse> createPermission(@RequestBody CreatePermissionRequest request) {
         return ApiResponse.<CreatePermissionResponse>builder()
                 .code(200)
                 .result(permissionService.createPermission(request))

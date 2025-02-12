@@ -1,5 +1,24 @@
 package com.shongon.identity_service.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.Set;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
+
 import com.shongon.identity_service.dto.request.user.CreateUserRequest;
 import com.shongon.identity_service.dto.response.user.CreateUserResponse;
 import com.shongon.identity_service.dto.response.user.ViewUserResponse;
@@ -9,25 +28,8 @@ import com.shongon.identity_service.exception.AppException;
 import com.shongon.identity_service.mapper.UserMapper;
 import com.shongon.identity_service.repository.RoleRepository;
 import com.shongon.identity_service.repository.UserRepository;
+
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authorization.AuthorizationDeniedException;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.TestPropertySource;
-import java.time.LocalDate;
-
-import java.util.Optional;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 @Slf4j
 @SpringBootTest
@@ -38,8 +40,10 @@ public class UserServiceTest {
 
     @MockBean
     private UserRepository userRepository;
+
     @MockBean
     private RoleRepository roleRepository;
+
     @MockBean
     private UserMapper userMapper;
 
@@ -52,10 +56,7 @@ public class UserServiceTest {
     @BeforeEach
     void setup() {
         var birthDate = LocalDate.of(1990, 1, 1);
-        role = Role.builder()
-                .role_name("USER")
-                .role_description("ROLE_USER")
-                .build();
+        role = Role.builder().role_name("USER").role_description("ROLE_USER").build();
 
         createUserRequest = CreateUserRequest.builder()
                 .username("test")
@@ -65,9 +66,8 @@ public class UserServiceTest {
                 .birthDate(birthDate)
                 .build();
 
-        createUserResponse = CreateUserResponse.builder()
-                .message("Create user success!")
-                .build();
+        createUserResponse =
+                CreateUserResponse.builder().message("Create user success!").build();
 
         user = User.builder()
                 .id("1231273612")
@@ -87,7 +87,6 @@ public class UserServiceTest {
         when(userMapper.createUser(any())).thenReturn(user);
         when(userMapper.toCreateUserResponse(any())).thenReturn(createUserResponse);
     }
-
 
     @Test
     void createUser_validRequest_success() {
@@ -117,17 +116,15 @@ public class UserServiceTest {
 
     @Test
     @WithMockUser(username = "test")
-     void getMyInfo_validRequest_success() {
+    void getMyInfo_validRequest_success() {
         // Given
-        when(userRepository.findByUsername(anyString()))
-                .thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
 
-        when(userMapper.toViewUserResponse(any())).thenReturn(
-                ViewUserResponse.builder()
+        when(userMapper.toViewUserResponse(any()))
+                .thenReturn(ViewUserResponse.builder()
                         .username("test")
                         .birthDate(LocalDate.of(1990, 1, 1))
-                        .build()
-        );
+                        .build());
 
         // When
         var response = userService.getMyInfo();
@@ -139,16 +136,14 @@ public class UserServiceTest {
 
     @Test
     @WithMockUser(username = "hongson")
-    void getMyInfo_invalidUserRequest_failed(){
+    void getMyInfo_invalidUserRequest_failed() {
         // Given
-        when(userRepository.findByUsername(anyString()))
-                .thenReturn(Optional.of(user));
-        when(userMapper.toViewUserResponse(any())).thenReturn(
-                ViewUserResponse.builder()
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userMapper.toViewUserResponse(any()))
+                .thenReturn(ViewUserResponse.builder()
                         .username("test")
                         .birthDate(LocalDate.of(1990, 1, 1))
-                        .build()
-        );
+                        .build());
 
         // When & Then
         assertThrows(AuthorizationDeniedException.class, () -> userService.getMyInfo());
@@ -158,11 +153,10 @@ public class UserServiceTest {
     @WithMockUser(username = "test")
     void getMyInfo_userNotFound_error() {
         // Given
-        when(userRepository.findByUsername(anyString()))
-                .thenReturn(Optional.empty());
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
         // When
-        var ex = assertThrows(AppException.class,() -> userService.getMyInfo());
+        var ex = assertThrows(AppException.class, () -> userService.getMyInfo());
 
         // Then
         assertThat(ex.getErrorCode().getCode()).isEqualTo(404);

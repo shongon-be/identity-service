@@ -1,22 +1,25 @@
 package com.shongon.identity_service.config.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shongon.identity_service.dto.response.user.ApiResponse;
-import com.shongon.identity_service.exception.ErrorCode;
+import java.io.IOException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
-import java.io.IOException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shongon.identity_service.dto.response.user.ApiResponse;
+import com.shongon.identity_service.exception.ErrorCode;
 
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
     // Create custom responses for Authentication errors
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException) throws IOException, ServletException {
+    public void commence(
+            HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
+            throws IOException, ServletException {
 
         ErrorCode errorCode = ErrorCode.INVALID_TOKEN;
 

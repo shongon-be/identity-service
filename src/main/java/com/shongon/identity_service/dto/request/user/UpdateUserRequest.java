@@ -1,14 +1,16 @@
 package com.shongon.identity_service.dto.request.user;
 
-import com.shongon.identity_service.utils.validation.DobConstraint;
+import java.time.LocalDate;
+import java.util.List;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import com.shongon.identity_service.utils.validation.DobConstraint;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @NoArgsConstructor

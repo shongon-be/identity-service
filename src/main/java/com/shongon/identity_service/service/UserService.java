@@ -1,5 +1,16 @@
 package com.shongon.identity_service.service;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.shongon.identity_service.dto.request.user.CreateUserRequest;
 import com.shongon.identity_service.dto.request.user.UpdateUserRequest;
 import com.shongon.identity_service.dto.response.user.CreateUserResponse;
@@ -12,20 +23,11 @@ import com.shongon.identity_service.exception.ErrorCode;
 import com.shongon.identity_service.mapper.UserMapper;
 import com.shongon.identity_service.repository.RoleRepository;
 import com.shongon.identity_service.repository.UserRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -39,12 +41,13 @@ public class UserService {
 
     @PostAuthorize("returnObject.username == authentication.name")
     @Transactional(readOnly = true)
-    public ViewUserResponse getMyInfo(){
+    public ViewUserResponse getMyInfo() {
         var context = SecurityContextHolder.getContext();
         String whoIsLogged = context.getAuthentication().getName();
 
-        User info = userRepository.findByUsername(whoIsLogged).orElseThrow(() ->
-                new AppException(ErrorCode.USER_NOT_FOUND));
+        User info = userRepository
+                .findByUsername(whoIsLogged)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         return userMapper.toViewUserResponse(info);
     }
@@ -52,8 +55,7 @@ public class UserService {
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional(readOnly = true)
     public List<GetAllUsersResponse> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
+        return userRepository.findAll().stream()
                 .map(userMapper::toGetAllUserResponse)
                 .toList();
     }
@@ -63,8 +65,8 @@ public class UserService {
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional(readOnly = true)
     public ViewUserResponse getUserById(String id) {
-        return userMapper.toViewUserResponse(userRepository.findById(id).
-                orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
+        return userMapper.toViewUserResponse(
+                userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
     }
 
     @Transactional
@@ -75,19 +77,16 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        var userRole = roleRepository.findById("USER")
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        var userRole = roleRepository.findById("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         user.setRoles(new HashSet<>(Set.of(userRole)));
 
         return userMapper.toCreateUserResponse(userRepository.save(user));
-
     }
 
     @PreAuthorize("@userRepository.findById(#userId).get().username == authentication.name || hasRole('ADMIN')")
     @Transactional
     public UpdateUserResponse updateUser(String userId, UpdateUserRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         userMapper.updateUser(user, request);
 
@@ -103,14 +102,12 @@ public class UserService {
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void deleteUser(String userId) {
-        if (!userRepository.existsById(userId))
-            throw new AppException(ErrorCode.USER_NOT_FOUND);
+        if (!userRepository.existsById(userId)) throw new AppException(ErrorCode.USER_NOT_FOUND);
 
         userRepository.deleteById(userId);
     }
 
     private void validateUsername(String username) {
-        if (userRepository.existsByUsername(username))
-            throw new AppException(ErrorCode.USER_EXISTED);
+        if (userRepository.existsByUsername(username)) throw new AppException(ErrorCode.USER_EXISTED);
     }
 }

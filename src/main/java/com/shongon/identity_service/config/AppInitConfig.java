@@ -1,22 +1,24 @@
 package com.shongon.identity_service.config;
 
-import com.shongon.identity_service.entity.User;
-import com.shongon.identity_service.exception.AppException;
-import com.shongon.identity_service.exception.ErrorCode;
-import com.shongon.identity_service.repository.RoleRepository;
-import com.shongon.identity_service.repository.UserRepository;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.shongon.identity_service.entity.User;
+import com.shongon.identity_service.exception.AppException;
+import com.shongon.identity_service.exception.ErrorCode;
+import com.shongon.identity_service.repository.RoleRepository;
+import com.shongon.identity_service.repository.UserRepository;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
@@ -28,16 +30,16 @@ public class AppInitConfig {
     PasswordEncoder passwordEncoder;
 
     @Bean
-    @ConditionalOnProperty(prefix = "spring",
+    @ConditionalOnProperty(
+            prefix = "spring",
             value = "datasource.driverClassName",
-            havingValue = "com.mysql.cj.jdbc.Driver"
-    )
+            havingValue = "com.mysql.cj.jdbc.Driver")
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         log.info("Application started");
         return args -> {
-            if (userRepository.findByUsername("admin").isEmpty()){
-                var adminRole = roleRepository.findById("USER")
-                        .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+            if (userRepository.findByUsername("admin").isEmpty()) {
+                var adminRole =
+                        roleRepository.findById("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
                 User admin = User.builder()
                         .username("admin")

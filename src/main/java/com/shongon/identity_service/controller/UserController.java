@@ -1,18 +1,20 @@
 package com.shongon.identity_service.controller;
 
+import java.util.List;
+
+import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.shongon.identity_service.dto.request.user.CreateUserRequest;
 import com.shongon.identity_service.dto.request.user.UpdateUserRequest;
 import com.shongon.identity_service.dto.response.user.*;
 import com.shongon.identity_service.service.UserService;
-import jakarta.validation.Valid;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 
 @Slf4j
 @RestController
@@ -23,12 +25,12 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/my-info")
-   public ApiResponse<ViewUserResponse> getMyInfo(){
-       return ApiResponse.<ViewUserResponse>builder()
-               .code(200)
-               .result(userService.getMyInfo())
-               .build();
-   }
+    public ApiResponse<ViewUserResponse> getMyInfo() {
+        return ApiResponse.<ViewUserResponse>builder()
+                .code(200)
+                .result(userService.getMyInfo())
+                .build();
+    }
 
     @GetMapping("/view-all")
     public ApiResponse<List<GetAllUsersResponse>> getAllUsers() {
@@ -57,7 +59,8 @@ public class UserController {
     }
 
     @PutMapping("/update/{userId}")
-    public ApiResponse<UpdateUserResponse> updateUser(@PathVariable String userId, @RequestBody @Valid UpdateUserRequest request) {
+    public ApiResponse<UpdateUserResponse> updateUser(
+            @PathVariable String userId, @RequestBody @Valid UpdateUserRequest request) {
         return ApiResponse.<UpdateUserResponse>builder()
                 .code(200)
                 .result(userService.updateUser(userId, request))

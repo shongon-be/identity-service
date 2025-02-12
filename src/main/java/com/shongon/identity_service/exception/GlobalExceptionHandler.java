@@ -1,17 +1,20 @@
 package com.shongon.identity_service.exception;
 
-import com.shongon.identity_service.dto.response.user.ApiResponse;
+import java.text.ParseException;
+import java.util.Map;
+import java.util.Objects;
+
 import jakarta.validation.ConstraintViolation;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.text.ParseException;
-import java.util.Map;
-import java.util.Objects;
+import com.shongon.identity_service.dto.response.user.ApiResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ControllerAdvice
@@ -19,7 +22,7 @@ public class GlobalExceptionHandler {
 
     private static final String MIN_ATTRIBUTE = "min";
 
-//    Handling unexpected error
+    //    Handling unexpected error
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ApiResponse> handlingUncategorizedException(RuntimeException e) {
         log.error("Exception: ", e);
@@ -29,12 +32,10 @@ public class GlobalExceptionHandler {
         apiResponse.setCode(ErrorCode.UNCATEGORIZED.getCode());
         apiResponse.setMessage(ErrorCode.UNCATEGORIZED.getMessage());
 
-        return ResponseEntity
-                .status(ErrorCode.UNCATEGORIZED.getStatusCode())
-                .body(apiResponse);
+        return ResponseEntity.status(ErrorCode.UNCATEGORIZED.getStatusCode()).body(apiResponse);
     }
 
-//    Handling invalid token
+    //    Handling invalid token
     @ExceptionHandler(value = ParseException.class)
     public ResponseEntity<ApiResponse> handlingInvalidToken(ParseException e) {
         log.error("Invalid/Expired Token: ", e);
@@ -44,9 +45,7 @@ public class GlobalExceptionHandler {
         apiResponse.setCode(ErrorCode.INVALID_TOKEN.getCode());
         apiResponse.setMessage(ErrorCode.INVALID_TOKEN.getMessage());
 
-        return ResponseEntity
-                .status(ErrorCode.INVALID_TOKEN.getStatusCode())
-                .body(apiResponse);
+        return ResponseEntity.status(ErrorCode.INVALID_TOKEN.getStatusCode()).body(apiResponse);
     }
 
     //    Handling invalid permission
@@ -59,12 +58,11 @@ public class GlobalExceptionHandler {
         apiResponse.setCode(ErrorCode.INVALID_PERMISSION.getCode());
         apiResponse.setMessage(ErrorCode.INVALID_PERMISSION.getMessage());
 
-        return ResponseEntity
-                .status(ErrorCode.INVALID_PERMISSION.getStatusCode())
+        return ResponseEntity.status(ErrorCode.INVALID_PERMISSION.getStatusCode())
                 .body(apiResponse);
     }
 
-//    Handling application exceptions
+    //    Handling application exceptions
     @ExceptionHandler(value = AppException.class)
     public ResponseEntity<ApiResponse> handlingAppException(AppException e) {
         log.error("AppException: ", e);
@@ -75,12 +73,10 @@ public class GlobalExceptionHandler {
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
 
-        return ResponseEntity
-                .status(errorCode.getStatusCode())
-                .body(apiResponse);
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
-//    Handling typo error in validation
+    //    Handling typo error in validation
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException e) {
 
@@ -93,25 +89,24 @@ public class GlobalExceptionHandler {
         try {
             errorCode = ErrorCode.valueOf(enumKey);
 
-            var constraintViolations = e.getBindingResult()
-                    .getAllErrors().get(0).unwrap(ConstraintViolation.class);
+            var constraintViolations =
+                    e.getBindingResult().getAllErrors().get(0).unwrap(ConstraintViolation.class);
 
             attributes = constraintViolations.getConstraintDescriptor().getAttributes();
 
             log.warn(attributes.toString());
-        } catch (IllegalArgumentException ignored){}
+        } catch (IllegalArgumentException ignored) {
+        }
 
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(
-                Objects.nonNull(attributes) ? mapAttribute(errorCode.getMessage(), attributes) :
-                errorCode.getMessage()
-        );
+                Objects.nonNull(attributes)
+                        ? mapAttribute(errorCode.getMessage(), attributes)
+                        : errorCode.getMessage());
 
-        return ResponseEntity
-                .status(errorCode.getStatusCode())
-                .body(apiResponse);
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
     private String mapAttribute(String message, Map<String, Object> attribute) {

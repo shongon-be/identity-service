@@ -1,15 +1,16 @@
 package com.shongon.identity_service.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
+
 import com.shongon.identity_service.dto.request.role.CreateRoleRequest;
 import com.shongon.identity_service.dto.request.role.UpdateRoleRequest;
 import com.shongon.identity_service.dto.response.role.CreateRoleResponse;
 import com.shongon.identity_service.dto.response.role.GetAllRolesResponse;
 import com.shongon.identity_service.dto.response.role.UpdateRoleResponse;
 import com.shongon.identity_service.entity.Role;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface RoleMapper {
