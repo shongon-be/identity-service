@@ -29,6 +29,8 @@ public class AppInitConfig {
     RoleRepository roleRepository;
     PasswordEncoder passwordEncoder;
 
+    String adminString = "admin";
+
     @Bean
     @ConditionalOnProperty(
             prefix = "spring",
@@ -37,13 +39,13 @@ public class AppInitConfig {
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         log.info("Application started");
         return args -> {
-            if (userRepository.findByUsername("admin").isEmpty()) {
+            if (userRepository.findByUsername(adminString).isEmpty()) {
                 var adminRole =
                         roleRepository.findById("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
                 User admin = User.builder()
-                        .username("admin")
-                        .password(passwordEncoder.encode("admin"))
+                        .username(adminString)
+                        .password(passwordEncoder.encode(adminString))
                         .roles(new HashSet<>(Set.of(adminRole)))
                         .build();
 

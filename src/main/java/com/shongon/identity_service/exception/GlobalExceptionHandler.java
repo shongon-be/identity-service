@@ -2,7 +2,6 @@ package com.shongon.identity_service.exception;
 
 import java.text.ParseException;
 import java.util.Map;
-import java.util.Objects;
 
 import jakarta.validation.ConstraintViolation;
 
@@ -95,16 +94,15 @@ public class GlobalExceptionHandler {
             attributes = constraintViolations.getConstraintDescriptor().getAttributes();
 
             log.warn(attributes.toString());
-        } catch (IllegalArgumentException ignored) {
+        } catch (IllegalArgumentException ex){
+            throw new IllegalArgumentException(ex.getMessage());
         }
 
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(
-                Objects.nonNull(attributes)
-                        ? mapAttribute(errorCode.getMessage(), attributes)
-                        : errorCode.getMessage());
+                mapAttribute(errorCode.getMessage(), attributes));
 
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }

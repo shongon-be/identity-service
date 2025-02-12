@@ -20,7 +20,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.shongon.identity_service.dto.request.user.CreateUserRequest;
-import com.shongon.identity_service.dto.response.user.CreateUserResponse;
 import com.shongon.identity_service.entity.Role;
 import com.shongon.identity_service.repository.RoleRepository;
 
@@ -30,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
-public class UserControllerIntegrationTest {
+class UserControllerIntegrationTest {
 
     @Container
     static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>("mysql:latest");
@@ -51,7 +50,7 @@ public class UserControllerIntegrationTest {
     private RoleRepository roleRepository;
 
     private CreateUserRequest createUserRequest;
-    private CreateUserResponse createUserResponse;
+
 
     @BeforeEach
     void initData() {
@@ -68,9 +67,7 @@ public class UserControllerIntegrationTest {
                 .password("12345678")
                 .birthDate(birthDate)
                 .build();
-        // sample output
-        createUserResponse =
-                CreateUserResponse.builder().message("Create user success!").build();
+
     }
 
     @Test

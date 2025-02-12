@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SpringBootTest
 @TestPropertySource("/test.properties")
-public class UserServiceTest {
+class UserServiceTest {
     @Autowired
     private UserService userService;
 
@@ -51,7 +51,6 @@ public class UserServiceTest {
     private Role role;
     private CreateUserRequest createUserRequest;
     private CreateUserResponse createUserResponse;
-    private ViewUserResponse viewUserResponse;
 
     @BeforeEach
     void setup() {
