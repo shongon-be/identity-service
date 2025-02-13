@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import com.shongon.identity_service.config.jwt.CustomJwtDecoder;
 import com.shongon.identity_service.config.jwt.JwtAuthEntryPoint;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -25,7 +26,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity, CustomJwtDecoder customJwtDecoder)
             throws Exception {
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
+        httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.addAllowedOrigin("http://localhost:3000");
+                    config.addAllowedMethod("*");
+                    config.addAllowedHeader("*");
+                    config.setAllowCredentials(true);
+                    config.addExposedHeader("Authorization");
+                    return config;
+                }));
 
         httpSecurity.authorizeHttpRequests(authorizeRequests -> authorizeRequests
                 .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
