@@ -2,8 +2,9 @@ package com.shongon.identity_service.service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import com.shongon.identity_service.constant.PredefinedRole;
+import com.shongon.identity_service.entity.Role;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -77,8 +78,10 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        var userRole = roleRepository.findById("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
-        user.setRoles(new HashSet<>(Set.of(userRole)));
+        HashSet<Role> roles = new HashSet<>();
+        roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
+
+        user.setRoles(roles);
 
         return userMapper.toCreateUserResponse(userRepository.save(user));
     }
