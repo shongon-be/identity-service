@@ -72,7 +72,9 @@ public class UserService {
 
     @Transactional
     public CreateUserResponse createUser(CreateUserRequest request) {
-        validateUsername(request.getUsername());
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
 
         User user = userMapper.createUser(request);
 
@@ -108,9 +110,5 @@ public class UserService {
         if (!userRepository.existsById(userId)) throw new AppException(ErrorCode.USER_NOT_FOUND);
 
         userRepository.deleteById(userId);
-    }
-
-    private void validateUsername(String username) {
-        if (userRepository.existsByUsername(username)) throw new AppException(ErrorCode.USER_EXISTED);
     }
 }

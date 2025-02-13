@@ -5,6 +5,7 @@ import java.util.Map;
 
 import jakarta.validation.ConstraintViolation;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;

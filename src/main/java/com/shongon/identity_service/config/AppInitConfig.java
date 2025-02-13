@@ -37,10 +37,10 @@ public class AppInitConfig {
     @Bean
     @ConditionalOnProperty(
             prefix = "spring",
-            value = "datasource.driverClassName",
-            havingValue = "com.mysql.cj.jdbc.Driver")
+            value = "datasource.driver-class-name",
+            havingValue = "com.mysql.cj.jdbc.Driver"
+    )
     ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
-        log.info("Initializing application.....");
         return args -> {
             if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
                 roleRepository.save(Role.builder()
@@ -65,7 +65,6 @@ public class AppInitConfig {
                 userRepository.save(user);
                 log.warn("admin user has been created with default password: admin, please change it");
             }
-            log.info("Application initialization completed .....");
         };
     }
 }

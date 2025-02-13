@@ -10,7 +10,7 @@ public enum ErrorCode {
     UNCATEGORIZED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Uncategorized Error"),
     INVALID_KEY(400, HttpStatus.BAD_REQUEST, "Invalid Message Key"),
 
-    USER_EXISTED(400, HttpStatus.BAD_REQUEST, "User already existed"),
+    USER_EXISTED(409, HttpStatus.CONFLICT, "User already existed"),
     USER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "User not found"),
 
     INVALID_USERNAME(400, HttpStatus.BAD_REQUEST, "Username must be at least {min} characters"),
@@ -22,7 +22,7 @@ public enum ErrorCode {
     UNAUTHENTICATED(401, HttpStatus.UNAUTHORIZED, "Unauthenticated"),
     INVALID_PERMISSION(403, HttpStatus.FORBIDDEN, "You do not have permission to access this resource"),
 
-    PERMISSION_EXISTED(400, HttpStatus.BAD_REQUEST, "Permission already existed"),
+    PERMISSION_EXISTED(409, HttpStatus.CONFLICT, "Permission already existed"),
     PERMISSION_NOT_FOUND(404, HttpStatus.NOT_FOUND, "Permission not found"),
 
     ROLE_EXISTED(409, HttpStatus.CONFLICT, "Role already existed"),
