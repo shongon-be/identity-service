@@ -2,15 +2,14 @@ package com.shongon.identity_service.config;
 
 import java.util.HashSet;
 
-import com.shongon.identity_service.constant.PredefinedRole;
-import com.shongon.identity_service.entity.Role;
-import lombok.experimental.NonFinal;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.shongon.identity_service.constant.PredefinedRole;
+import com.shongon.identity_service.entity.Role;
 import com.shongon.identity_service.entity.User;
 import com.shongon.identity_service.repository.RoleRepository;
 import com.shongon.identity_service.repository.UserRepository;
@@ -18,6 +17,7 @@ import com.shongon.identity_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,8 +38,7 @@ public class AppInitConfig {
     @ConditionalOnProperty(
             prefix = "spring",
             value = "datasource.driver-class-name",
-            havingValue = "com.mysql.cj.jdbc.Driver"
-    )
+            havingValue = "com.mysql.cj.jdbc.Driver")
     ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
         return args -> {
             if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {

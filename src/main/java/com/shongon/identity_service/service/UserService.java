@@ -3,8 +3,6 @@ package com.shongon.identity_service.service;
 import java.util.HashSet;
 import java.util.List;
 
-import com.shongon.identity_service.constant.PredefinedRole;
-import com.shongon.identity_service.entity.Role;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,12 +10,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shongon.identity_service.constant.PredefinedRole;
 import com.shongon.identity_service.dto.request.user.CreateUserRequest;
 import com.shongon.identity_service.dto.request.user.UpdateUserRequest;
 import com.shongon.identity_service.dto.response.user.CreateUserResponse;
 import com.shongon.identity_service.dto.response.user.GetAllUsersResponse;
 import com.shongon.identity_service.dto.response.user.UpdateUserResponse;
 import com.shongon.identity_service.dto.response.user.ViewUserResponse;
+import com.shongon.identity_service.entity.Role;
 import com.shongon.identity_service.entity.User;
 import com.shongon.identity_service.exception.AppException;
 import com.shongon.identity_service.exception.ErrorCode;

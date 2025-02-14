@@ -5,7 +5,6 @@ import java.util.Map;
 
 import jakarta.validation.ConstraintViolation;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -95,15 +94,14 @@ public class GlobalExceptionHandler {
             attributes = constraintViolations.getConstraintDescriptor().getAttributes();
 
             log.warn(attributes.toString());
-        } catch (IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(ex.getMessage());
         }
 
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(
-                mapAttribute(errorCode.getMessage(), attributes));
+        apiResponse.setMessage(mapAttribute(errorCode.getMessage(), attributes));
 
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }

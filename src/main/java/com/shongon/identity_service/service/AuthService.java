@@ -48,15 +48,15 @@ public class AuthService {
 
     @NonFinal
     @Value("${jwt.signer-key}")
-    protected String SIGNER_KEY;
+    protected String signerKey;
 
     @NonFinal
     @Value("${jwt.valid-duration}")
-    protected Long VALID_DURATION;
+    protected Long validDuration;
 
     @NonFinal
     @Value("${jwt.refreshable-duration}")
-    protected Long REFRESHABLE_DURATION;
+    protected Long refreshableDuration;
 
     //  Introspect token
     @Transactional
@@ -149,7 +149,7 @@ public class AuthService {
     }
 
     //    Generate token
-    private String generateToken(User user) {
+    private String generateToken(User user) throws RuntimeException {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
@@ -158,7 +158,7 @@ public class AuthService {
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         // Exprire after 1 hour
-                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
+                        Instant.now().plus(validDuration, ChronoUnit.SECONDS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .build();
@@ -168,7 +168,7 @@ public class AuthService {
         JWSObject jwsObject = new JWSObject(header, payload);
 
         try {
-            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
+            jwsObject.sign(new MACSigner(signerKey.getBytes()));
             return jwsObject.serialize();
         } catch (Exception e) {
             log.error("Can not create token", e);
@@ -193,7 +193,7 @@ public class AuthService {
 
     // Verify valid token
     private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+        JWSVerifier verifier = new MACVerifier(signerKey.getBytes());
 
         SignedJWT signedJWT = SignedJWT.parse(token);
 
@@ -202,7 +202,7 @@ public class AuthService {
                         .getJWTClaimsSet()
                         .getIssueTime()
                         .toInstant()
-                        .plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS)
+                        .plus(refreshableDuration, ChronoUnit.SECONDS)
                         .toEpochMilli())
                 : signedJWT.getJWTClaimsSet().getExpirationTime();
 

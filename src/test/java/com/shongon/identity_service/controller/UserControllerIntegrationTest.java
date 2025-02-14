@@ -51,7 +51,6 @@ class UserControllerIntegrationTest {
 
     private CreateUserRequest createUserRequest;
 
-
     @BeforeEach
     void initData() {
         LocalDate birthDate = LocalDate.of(1990, 1, 1);
@@ -67,7 +66,6 @@ class UserControllerIntegrationTest {
                 .password("12345678")
                 .birthDate(birthDate)
                 .build();
-
     }
 
     @Test
