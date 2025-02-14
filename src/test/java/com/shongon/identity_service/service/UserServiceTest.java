@@ -109,7 +109,7 @@ class UserServiceTest {
         var ex = assertThrows(AppException.class, () -> userService.createUser(createUserRequest));
 
         // Then
-        assertThat(ex.getErrorCode().getCode()).isEqualTo(400);
+        assertThat(ex.getErrorCode().getCode()).isEqualTo(409);
         assertThat(ex.getMessage()).isEqualTo("User already existed");
     }
 
