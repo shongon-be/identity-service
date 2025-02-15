@@ -73,4 +73,5 @@ docker run --name identity-service \
 ---
 
 **Source**: [Devteria](https://www.youtube.com/playlist?list=PL2xsxmVse9IaxzE8Mght4CFltGOqcG6FC)
-**Source**: [Front-end](https://github.com/shongon-be/identity-frontend/tree/main)
+
+**Front-end Repo**: [Front-end](https://github.com/shongon-be/identity-frontend/tree/main)
